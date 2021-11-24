@@ -1,0 +1,15 @@
+{
+    "name": "shadowz/core",
+    "autoload": {
+        "psr-4": {
+            "Shadowz\\Core\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "arturpttp",
+            "email": "36490387+arturpttp@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
