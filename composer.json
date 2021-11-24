@@ -2,7 +2,7 @@
     "name": "shadowz/core",
     "autoload": {
         "psr-4": {
-            "Shadowz\\Core\\": "src/"
+            "Core\\": "."
         }
     },
     "authors": [
