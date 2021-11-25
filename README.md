@@ -29,7 +29,7 @@ $router = new Router($routes, $application);
 $router->load();
 ```
 
-##Creating a config
+**Creating a config**
 
 In your app folder create a folder called `configs` inside it, you should create a `.php` file witch should return an array
 
@@ -58,13 +58,11 @@ return [
 ];
 ```
 
-##Routing
+**Routing**
 
 This is how your `app/routes.php` should look like
 
 ```php
-<?php
-
 # ['Controller@Method', 'url', ['auth' => true, 'level' => 1]]
 
 $routes[] = ['HomeController@index', '/'];
@@ -77,7 +75,7 @@ $routes[] = ['BlogController@show', '/posts/{id}/show'];
 return $routes;
 ```
 
-##Controllers
+**Controllers**
 
 This is how your controllers should be
 
@@ -114,7 +112,7 @@ class HomeController extends Controller
 }
 ```
 
-##Models
+**Models**
 
 This is how your models should be
 
