@@ -73,10 +73,26 @@ class Connection implements Connectable
         Logger::error('An error occurred on trying to connect to database! Error: {error} on line: {line}', ['message' => $error->getMessage(), 'line' => $error->getLine()]);
     }
 
-    public static function getInstance(): Connectable {
+    public static function getInstance(): Connectable
+    {
         if (self::$instance === null or !(self::$instance instanceof Application))
             self::$instance = new self();
         return self::$instance;
+    }
+
+    public function execute(string $query, ?array $params = null, $binding = false): \PDOStatement
+    {
+        $statement = is_null($params) ? $this->connection->query($query) : $this->connection->prepare($query);
+        if (!is_null($params))
+            if ($binding) {
+                $x = 1;
+                foreach ($params as $param => $value) {
+                    $statement->bindParam($x, $value);
+                    $x++;
+                }
+            }
+        $statement->execute($binding ? null : $params);
+        return $statement;
     }
 
 }

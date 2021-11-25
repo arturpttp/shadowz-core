@@ -14,15 +14,16 @@ abstract class AbstractRepository extends AbstractCache implements Repository
 
     private ?Store $store = null;
 
-    public function __construct(AbstractStore $store = null, $load = true)
+    public function __construct(?Store $store = null, $load = true)
     {
         $this->store = $store;
-        if ($store == null)
+        if ($store == null) {
             if ($load) {
                 $this->save();
                 $this->load();
             }
             Logger::error("[{$store}] is undefined on class " . get_class($this));
+        }
         $this->set("store", get_class($store));
         RepositoryCache::set($this->getRepositoryName(), clone($this));
     }

@@ -21,6 +21,7 @@ class Router
      */
     private string $ext = '.php';
     private string $uri;
+    private bool $normalized = false;
 
     public array $routes;
     public Application $application;
@@ -39,6 +40,7 @@ class Router
     {
         $this->routes = $this->nomalize($routes);
         $this->application = $application;
+        $this->application->router = $this;
         $this->uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     }
 
@@ -66,6 +68,7 @@ class Router
         }
         if ($nRoutes == null)
             Logger::error('routeNormalize->[{nRoutes}] is null', ['nRoutes' => $nRoutes]);
+        else $this->normalized = true;
         return $nRoutes;
     }
 
@@ -103,19 +106,19 @@ class Router
                     if (method_exists($controller, $method)) {
                         switch (count($params)) {
                             case 1:
-                                $controller->$method($params[0], $this->getRequest());
+                                $controller->$method($params[0], $this->getRequest(), $this->getResponse());
                                 break;
                             case 2:
-                                $controller->$method($params[0], $params[1], $this->getRequest());
+                                $controller->$method($params[0], $params[1], $this->getRequest(), $this->getResponse());
                                 break;
                             case 3:
-                                $controller->$method($params[0], $params[1], $params[2], $this->getRequest());
+                                $controller->$method($params[0], $params[1], $params[2], $this->getRequest(), $this->getResponse());
                                 break;
                             case 4:
-                                $controller->$method($params[0], $params[1], $params[2], $params[3], $this->getRequest());
+                                $controller->$method($params[0], $params[1], $params[2], $params[3], $this->getRequest(), $this->getResponse());
                                 break;
                             default:
-                                $controller->$method($this->getRequest());
+                                $controller->$method($this->getRequest(), $this->getResponse());
                                 break;
                         }
                     } else
@@ -145,8 +148,33 @@ class Router
         foreach ($_POST as $key => $value) {
             $obj->post->$key = $value;
         }
-
         return $obj;
+    }
+
+
+    private function getResponse(): Response {
+        return new Response(0, "", true);
+    }
+
+    public function get($url, $controller = null, $method = null, $auth = false, $level = 0, ?\Closure $callback = null)
+    {
+        $authInfos = [
+            'auth' => $auth,
+            'level' => $level
+        ];
+        if (is_null($callback)) {
+            if ($this->normalized)
+                $this->routes[] = [$controller, $method, $url, $authInfos, '@' => "$controller@$method"];
+            else
+                $this->routes[] = ["$controller@$method", $url, $authInfos];
+        }else {
+            $fn = $callback($this->getRequest());
+            if ($fn) {
+                if ($this->normalized)
+                    $this->routes[] = [explode('@', $fn[0])[0], explode('@', $fn[0])[1], $fn[1], $authInfos, '@' => "$controller@$method"];
+                else $this->routes[] = $fn;
+            }
+        }
     }
 
 }

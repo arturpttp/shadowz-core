@@ -13,5 +13,6 @@ interface Connectable
     public function connect();
     public function getConnection(): PDO;
     public function onError(PDOException $error);
+    public function execute(string $query, ?array $params = null, $binding = false): \PDOStatement;
 
 }

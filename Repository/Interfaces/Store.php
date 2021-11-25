@@ -14,7 +14,7 @@ interface Store
     public function forever($key, $value);
     public function forget($key);
     public function flush();
-    public function getPrefix();
+    public function getPrefix(): string;
 
     public function __toString(): string;
 

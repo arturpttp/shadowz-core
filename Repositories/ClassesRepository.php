@@ -13,7 +13,7 @@ class ClassesRepository extends \Core\Repository\AbstractRepository
         foreach ($classes as $name => $path) {
             $this->set($name, $path);
         }
-        parent::__construct();
+        parent::__construct(new ClassesStore($this));
     }
 
     public function getRepositoryName(): string

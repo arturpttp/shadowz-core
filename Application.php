@@ -7,6 +7,8 @@ use Core\Repository\Interfaces\Factory;
 use Core\Repository\Interfaces\Repository;
 use Core\System\Config;
 use Core\System\RepositoryCache;
+use Core\System\Router;
+use Core\System\User\User;
 use Core\Utils\Logger;
 
 class Application implements Factory {
@@ -14,14 +16,18 @@ class Application implements Factory {
     private static ?Application $instance = null;
     private static array $classes;
     private static ClassesRepository $classesRepository;
+    private ?User $user;
+    public ?Router $router = null;
 
     public function __construct() {
         self::$classes = [
             'database' => 'Core/Database',
             'cache' => 'Core/Repository',
-            'validator' => 'Core/Validator'
+            'validator' => 'Core/Validator',
+            'user' => 'System/User'
         ];
         self::$classesRepository = new ClassesRepository(self::$classes);
+        $this->setUser(null);
     }
 
     public static function init(): void
@@ -41,5 +47,21 @@ class Application implements Factory {
     {
         if (is_null($name)) return null;
         return RepositoryCache::get($name);
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User|null $user
+     */
+    public function setUser(?User $user): void
+    {
+        $this->user = $user;
     }
 }

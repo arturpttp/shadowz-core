@@ -26,3 +26,4 @@ $application->init();
 $routes = require_once __DIR__ . '/../app/routes.php';
 $router = new Router($routes, $application);
 $router->load();
+

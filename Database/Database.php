@@ -197,5 +197,10 @@ class Database
     {
         return $this->result;
     }
+    public function getStatement(): \PDOStatement
+    {
+        return $this->statement;
+    }
+
 
 }
